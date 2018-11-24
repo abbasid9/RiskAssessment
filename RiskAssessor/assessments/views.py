@@ -3,11 +3,11 @@ from functools import wraps
 from flask import request, Blueprint, render_template, jsonify, flash, \
     redirect, url_for, abort
 from flask_restful import Resource, reqparse
-from my_app import db, app, api
-from my_app.catalog.models import Product, Category
+from RiskAssessor import db, app, api
+from RiskAssessor.assessments.models import Product, Category
 from sqlalchemy.orm.util import join
 
-catalog = Blueprint('catalog', __name__)
+assessment = Blueprint('assessment', __name__)
 
 
 def template_or_json(template=None):
@@ -33,28 +33,28 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
-@catalog.route('/')
-@catalog.route('/home')
+@assessment.route('/')
+@assessment.route('/home')
 @template_or_json('home.html')
 def home():
     products = Product.query.all()
     return {'count': len(products)}
 
 
-@catalog.route('/product/<id>')
+@assessment.route('/product/<id>')
 def product(id):
     product = Product.query.get_or_404(id)
     return render_template('product.html', product=product)
 
 
-@catalog.route('/products')
-@catalog.route('/products/<int:page>')
+@assessment.route('/products')
+@assessment.route('/products/<int:page>')
 def products(page=1):
     products = Product.query.paginate(page, 10)
     return render_template('products.html', products=products)
 
 
-@catalog.route('/product-create', methods=['GET', 'POST'])
+@assessment.route('/product-create', methods=['GET', 'POST'])
 def create_product():
     if request.method == 'POST':
         name = request.form.get('name')
@@ -67,12 +67,12 @@ def create_product():
         db.session.add(product)
         db.session.commit()
         flash('The product %s has been created' % name, 'success')
-        return redirect(url_for('catalog.product', id=product.id))
+        return redirect(url_for('assessment.product', id=product.id))
     return render_template('product-create.html')
 
 
-@catalog.route('/product-search')
-@catalog.route('/product-search/<int:page>')
+@assessment.route('/product-search')
+@assessment.route('/product-search/<int:page>')
 def product_search(page=1):
     name = request.args.get('name')
     price = request.args.get('price')
@@ -94,7 +94,7 @@ def product_search(page=1):
     )
 
 
-@catalog.route('/category-create', methods=['POST',])
+@assessment.route('/category-create', methods=['POST',])
 def create_category():
     name = request.form.get('name')
     category = Category(name)
@@ -103,13 +103,13 @@ def create_category():
     return render_template('category.html', category=category)
 
 
-@catalog.route('/category/<id>')
+@assessment.route('/category/<id>')
 def category(id):
     category = Category.query.get_or_404(id)
     return render_template('category.html', category=category)
 
 
-@catalog.route('/categories')
+@assessment.route('/categories')
 def categories():
     categories = Category.query.all()
     return render_template('categories.html', categories=categories)

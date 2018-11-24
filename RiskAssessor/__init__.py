@@ -11,7 +11,7 @@ app.secret_key = 'some_random_key'
 
 api = Api(app)
 
-from my_app.catalog.views import catalog
-app.register_blueprint(catalog)
+from RiskAssessor.assessments.views import assessment
+app.register_blueprint(assessment)
 
 db.create_all()

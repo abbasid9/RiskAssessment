@@ -1,4 +1,4 @@
-from my_app import db
+from RiskAssessor import db
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)

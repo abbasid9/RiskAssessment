@@ -1,2 +1,2 @@
-from my_app import app
+from RiskAssessor import app
 app.run(debug=True)
